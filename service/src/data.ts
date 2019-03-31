@@ -15,7 +15,7 @@ export const connection = new SQLite.Database(':memory:');
  * Note, it is an in-memory database, so the data will be reset when the
  * server restarts.
  */
-export function initialize() {
+export function initialize(): void {
   connection.serialize(() => {
     connection.run(
       'CREATE TABLE meter_reads (cumulative INTEGER, reading_date TEXT, unit TEXT)'
@@ -27,6 +27,22 @@ export function initialize() {
         'INSERT INTO meter_reads (cumulative, reading_date, unit) VALUES (?, ?, ?)',
         [data.cumulative, data.readingDate, data.unit]
       );
+    });
+  });
+}
+
+export function all(): Promise<any[]> {
+  const query = 'SELECT * FROM meter_reads ORDER BY cumulative';
+
+  return new Promise<any[]>((resolve, reject) => {
+    connection.serialize(() => {
+      connection.all(query, (error, rows) => {
+        if (error) {
+          reject(error);
+        }
+
+        resolve(rows);
+      });
     });
   });
 }

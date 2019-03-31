@@ -3,7 +3,7 @@ import { expect } from 'chai';
 const sampleData = require('../sampleData.json');
 
 describe('data', () => {
-  it('initialize should import the data from the sampleData file', done => {
+  it('#initialize should import the data from the sampleData file', done => {
     data.initialize();
 
     data.connection.serialize(() => {
@@ -20,6 +20,19 @@ describe('data', () => {
           done();
         }
       );
+    });
+  });
+
+  it('#all should return every meter reading stored as a promise', () => {
+    data.initialize();
+
+    data.all().then(meterReadings => {
+      expect(meterReadings).to.have.length(sampleData.electricity.length);
+      meterReadings.forEach((row, index) => {
+        expect(row.cumulative).to.equal(
+          sampleData.electricity[index].cumulative
+        );
+      });
     });
   });
 });
