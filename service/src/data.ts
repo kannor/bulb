@@ -31,6 +31,10 @@ export function initialize(): void {
   });
 }
 
+export function cleanup(): void {
+  connection.run('DROP TABLE meter_reads');
+}
+
 export function all(): Promise<any[]> {
   const query = 'SELECT * FROM meter_reads ORDER BY cumulative';
 

@@ -3,9 +3,15 @@ import { expect } from 'chai';
 const sampleData = require('../sampleData.json');
 
 describe('data', () => {
-  it('#initialize should import the data from the sampleData file', done => {
+  before(() => {
     data.initialize();
+  });
 
+  after(() => {
+    data.cleanup();
+  });
+
+  it('#initialize should import the data from the sampleData file', done => {
     data.connection.serialize(() => {
       data.connection.all(
         'SELECT * FROM meter_reads ORDER BY cumulative',
@@ -24,8 +30,6 @@ describe('data', () => {
   });
 
   it('#all should return every meter reading stored as a promise', () => {
-    data.initialize();
-
     data.all().then(meterReadings => {
       expect(meterReadings).to.have.length(sampleData.electricity.length);
       meterReadings.forEach((row, index) => {
