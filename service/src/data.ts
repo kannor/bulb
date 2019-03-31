@@ -3,6 +3,12 @@ const sampleData = require('../sampleData.json');
 
 const SQLite = sqlite3.verbose();
 
+export interface MeterReading {
+  cumulative: number;
+  readingDate: Date;
+  unit: string;
+}
+
 export const connection = new SQLite.Database(':memory:');
 
 /**
@@ -35,12 +41,12 @@ export function cleanup(): void {
   connection.run('DROP TABLE meter_reads');
 }
 
-export function all(): Promise<any[]> {
+export function all(): Promise<MeterReading[]> {
   const query = `SELECT cumulative, reading_date as readingDate, unit
                  FROM meter_reads
                  ORDER BY cumulative`;
 
-  return new Promise<any[]>((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     connection.serialize(() => {
       connection.all(query, (error, rows) => {
         if (error) {
@@ -53,8 +59,8 @@ export function all(): Promise<any[]> {
   });
 }
 
-export function insert(reading: any): Promise<any> {
-  return new Promise<any[]>((resolve, reject) => {
+export function insert(reading: any): Promise<MeterReading> {
+  return new Promise((resolve, reject) => {
     connection.run(
       'INSERT INTO meter_reads (cumulative, reading_date, unit) VALUES (?, ?, ?)',
       [reading.cumulative, reading.readingDate, reading.unit],
