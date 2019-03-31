@@ -1,5 +1,7 @@
 import * as Koa from 'koa';
 import * as KoaRouter from 'koa-router';
+import bodyParser = require('koa-bodyparser');
+
 import * as db from './data';
 
 const PORT = process.env.PORT || 3000;
@@ -9,6 +11,7 @@ export default function createServer() {
 
   const router = new KoaRouter();
   router
+    .use(bodyParser())
     .get('/', (ctx, next) => {
       ctx.body = 'Hello world';
       next();
@@ -16,6 +19,15 @@ export default function createServer() {
     .get('/meter-readings', async (ctx, next) => {
       try {
         ctx.body = await db.all();
+      } catch (error) {
+        ctx.throw(error, 400);
+      }
+      next();
+    })
+    .post('/meter-readings', async (ctx, next) => {
+      const reading = ctx.request.body;
+      try {
+        ctx.body = await db.insert(reading);
       } catch (error) {
         ctx.throw(error, 400);
       }

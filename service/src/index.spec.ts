@@ -48,4 +48,29 @@ describe('index', () => {
         });
     });
   });
+
+  describe('POST /meter-readings', () => {
+    it('should create and store a new meter reading', async () => {
+      const previousReadings = await data.all();
+      const newReading = {
+        cumulative: 42,
+        readingDate: '2019-03-31T12:30:42.000Z',
+        unit: 'kWh'
+      };
+
+      expect(previousReadings).not.to.contain(newReading);
+
+      await request(app)
+        .post('/meter-readings')
+        .set('content-type', 'application/json')
+        .send(newReading)
+        .then(response => {
+          expect(response).to.have.status(200);
+        });
+
+      const latestReadings = await data.all();
+
+      expect(latestReadings.length).to.equal(previousReadings.length + 1);
+    });
+  });
 });

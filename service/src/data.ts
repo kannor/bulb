@@ -36,7 +36,9 @@ export function cleanup(): void {
 }
 
 export function all(): Promise<any[]> {
-  const query = 'SELECT * FROM meter_reads ORDER BY cumulative';
+  const query = `SELECT cumulative, reading_date as readingDate, unit
+                 FROM meter_reads
+                 ORDER BY cumulative`;
 
   return new Promise<any[]>((resolve, reject) => {
     connection.serialize(() => {
@@ -48,5 +50,21 @@ export function all(): Promise<any[]> {
         resolve(rows);
       });
     });
+  });
+}
+
+export function insert(reading: any): Promise<any> {
+  return new Promise<any[]>((resolve, reject) => {
+    connection.run(
+      'INSERT INTO meter_reads (cumulative, reading_date, unit) VALUES (?, ?, ?)',
+      [reading.cumulative, reading.readingDate, reading.unit],
+      error => {
+        if (error) {
+          console.error(error);
+          reject(error);
+        }
+        resolve(reading);
+      }
+    );
   });
 }

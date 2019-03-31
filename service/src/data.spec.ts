@@ -39,4 +39,18 @@ describe('data', () => {
       });
     });
   });
+
+  it('#insert store a meter reading in the meter_read table returning a promise', async () => {
+    const newReading = {
+      cumulative: 42,
+      readingDate: '2017-05-08T00:00:00.000Z',
+      unit: 'kWh'
+    };
+
+    await data.insert(newReading);
+
+    const latestReadings = await data.all();
+
+    expect(newReading).to.eql(latestReadings[0]);
+  });
 });
