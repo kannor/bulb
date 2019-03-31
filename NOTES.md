@@ -1,8 +1,9 @@
-Candidate Name: [To be completed]
+Candidate Name: Kelvin Smith
 
-Tasks: [To be completed]
+Tasks: 2 & 3
 
-Time: [To be completed]
+Time: ...
 
 Notes:
-[Explain your approach and anything particular of note in your solution]
+
+I've decided to choose the second task as I'm more comfortable with server development at the moment.
